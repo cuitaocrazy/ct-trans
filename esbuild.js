@@ -1,5 +1,4 @@
 import * as esbuild from "esbuild";
-// import postcss from "esbuild-postcss";
 import fg from "fast-glob";
 import fse from "fs-extra";
 import { watch } from "chokidar";
@@ -7,17 +6,7 @@ import postcss from "postcss";
 import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
 import fs from "fs";
-
-/**
- * @type {import('tailwindcss').Config}
- */
-const tailwindConfig = {
-  // content: ["./src/**/*.{html,tsx}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+import tailwindConfig from "./tailwind.config";
 
 /**
  *
@@ -28,7 +17,7 @@ const myPlugin = (tailwindConfig) => ({
   name: "my-plugin",
   setup(build) {
     build.onLoad({ filter: /\.css$/ }, async (args) => {
-      const css = await fs.readFileSync(args.path, "utf8");
+      const css = fs.readFileSync(args.path, "utf8");
       const result = await postcss([
         tailwindcss(tailwindConfig),
         autoprefixer(),
@@ -109,7 +98,9 @@ async function build() {
   await Promise.all(tasks);
 }
 
+console.log("Building...");
 await build();
+console.log("Done!");
 
 if (process.argv.includes("--watch")) {
   watch("./src/**/*.*", {

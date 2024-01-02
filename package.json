@@ -20,7 +20,6 @@
     "chokidar": "^3.5.3",
     "esbuild": "^0.19.10",
     "esbuild-postcss": "^0.0.4",
-    "esbuild-style-plugin": "^1.6.3",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "postcss": "^8.4.32",

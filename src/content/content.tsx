@@ -18,14 +18,19 @@ function App(props: { p: Promise<string> }) {
     });
   });
 
-  return <div className="fixed top-0">{text}</div>;
+  return <div className="border bg-slate-100">{text}</div>;
 }
 
-function createBubble(promise: Promise<string>) {
+function createBubble(promise: Promise<string>, selectedRect: DOMRect) {
   const container = document.createElement("div");
-
+  container.style.position = "absolute";
+  container.style.bottom = `${
+    window.innerHeight - selectedRect.top - window.scrollY
+  }px`;
+  container.style.left = `${selectedRect.left}px`;
+  container.style.maxWidth = `${selectedRect.width}px`;
+  // container.style.height = `${selectedRect.height}px`;
   document.body.appendChild(container);
-
   const root = createRoot(container);
   root.render(<App p={promise} />);
 
@@ -39,7 +44,12 @@ let clean: (() => void) | null = null;
 
 window.addEventListener("mouseup", (evt) => {
   setTimeout(() => {
-    const selectedText = window.getSelection()?.toString().trim();
+    const selection = window.getSelection();
+    if (!selection || !selection.rangeCount) return;
+
+    const selectedText = selection.toString().trim();
+    const selectedRange = selection.getRangeAt(0);
+    const selectedRect = selectedRange.getBoundingClientRect();
 
     console.log("mouseup", selectedText);
 
@@ -55,7 +65,7 @@ window.addEventListener("mouseup", (evt) => {
         }
       );
       if (clean) clean();
-      clean = createBubble(p.promise);
+      clean = createBubble(p.promise, selectedRect);
     } else if (clean) {
       clean();
       clean = null;
