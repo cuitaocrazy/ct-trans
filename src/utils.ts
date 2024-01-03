@@ -1,3 +1,5 @@
+import type { TransContent } from "./types";
+
 export async function readGoogleRpcStream(stream: ReadableStream<Uint8Array>) {
   const reader = stream.getReader();
   const buffers: Uint8Array[] = [];
@@ -20,13 +22,13 @@ export async function readGoogleRpcStream(stream: ReadableStream<Uint8Array>) {
 }
 
 export function generatorTransReqBody(text: string) {
-  const params = [[text, "en", "zh-CN", 1], []];
+  const params = [[text, "auto", "zh-CN", 1], []];
   const paramsStr = JSON.stringify(params);
   const payload = [[["MkEWBc", paramsStr, null, "generic"]]];
   return `f.req=${encodeURIComponent(JSON.stringify(payload))}`;
 }
 
-export function extractTrans(obj: any) {
+export function extractTrans(obj: any): TransContent {
   const transStr = obj[0][2] as string;
   const transObj = JSON.parse(transStr);
   const isSentence = transObj[0][5] === null;

@@ -1,4 +1,5 @@
-import { generatorTransReqBody, getTrans } from "./utils";
+import type { TransResult } from "./types";
+import { getTrans } from "./utils";
 
 chrome.runtime.onInstalled.addListener(async () => {
   const rules: chrome.declarativeNetRequest.Rule[] = [
@@ -34,10 +35,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   getTrans(message.text)
     .then((trans) => {
-      sendResponse({ success: "ok", result: trans });
+      sendResponse({ success: "ok", result: trans } satisfies TransResult);
     })
     .catch((err) => {
-      sendResponse({ success: "error", result: err });
+      sendResponse({ success: "error", result: err } satisfies TransResult);
     });
 
   // 返回true以保持消息通道开放
